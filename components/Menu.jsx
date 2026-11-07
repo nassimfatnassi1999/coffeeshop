@@ -36,7 +36,7 @@ function ProductCard({ p, i }) {
         <span>{p.specs[1]}</span>
       </div>
       <div className="product-img">
-        <img src={p.image} alt={p.name} loading="lazy" width="1000" height="1200" />
+        <img src={p.image} alt={p.alt} loading="lazy" width="900" height="1125" />
       </div>
       <h3>{p.name}</h3>
       <p className="desc">{p.text}</p>
@@ -83,15 +83,14 @@ export default function Menu() {
         },
       });
 
-      // chaque visuel tourne / glisse pendant qu'il traverse l'écran
+      // chaque photo glisse dans son cadre pendant qu'elle traverse l'écran
       cards.forEach((card) => {
         const img = card.querySelector('.product-img img');
         gsap.fromTo(
           img,
-          { rotate: -10, xPercent: 18, scale: 1.12 },
+          { xPercent: 7, scale: 1.22 },
           {
-            rotate: 6,
-            xPercent: -14,
+            xPercent: -7,
             scale: 1.3,
             ease: 'none',
             scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true },

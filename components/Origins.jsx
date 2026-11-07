@@ -47,7 +47,8 @@ function OriginCard({ o }) {
   return (
     <article className="origin-card" style={{ '--tint': o.color + 'aa' }}>
       <div className="origin-visual">
-        <img src={o.image} alt={`Sachet KAHWA ${o.origin} ${o.region}`} loading="lazy" width="900" height="1200" />
+        <img src={o.image} alt={o.photo} loading="lazy" width="960" height="1200" />
+        <span className="origin-tag">{o.origin}</span>
       </div>
       <div className="origin-body">
         <div className="row">
@@ -117,10 +118,11 @@ export default function Origins() {
           ease: 'expo.out',
           scrollTrigger: { trigger: card, start: 'top 90%' },
         });
+        // parallaxe verticale de la photo dans son cadre
         gsap.fromTo(
           card.querySelector('img'),
-          { yPercent: -7, rotate: -3 },
-          { yPercent: 7, rotate: 3, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true } }
+          { yPercent: -5 },
+          { yPercent: 5, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true } }
         );
       });
     }, root);

@@ -10,8 +10,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Animation "vidéo" pilotée par le scroll :
- * 150 images (rendues en 3D par scripts/render-assets.mjs) dessinées dans un <canvas>
- * selon la position du scroll — la technique des sites produits type Apple.
+ * 150 images tirées de vraies vidéos (grains -> tassage -> extraction -> latte art,
+ * préparées par scripts/prepare-media.sh) dessinées dans un <canvas> selon la position
+ * du scroll — la technique des sites produits type Apple.
  */
 export default function ScrollSequence() {
   const root = useRef(null);
@@ -37,18 +38,19 @@ export default function ScrollSequence() {
       return null;
     };
 
+    // l'image remplit tout l'écran (comme object-fit: cover) ;
+    // sur mobile on recadre autour du sujet de chaque plan (SEQUENCE.focus)
     const draw = (i) => {
       const img = pick(i);
       if (!img) return;
       const cw = cv.width;
       const ch = cv.height;
-      const portrait = cw / ch < 1;
-      let scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
-      scale *= portrait ? 1.7 : 0.9;
+      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
       const w = img.naturalWidth * scale;
       const h = img.naturalHeight * scale;
-      ctx2d.clearRect(0, 0, cw, ch);
-      ctx2d.drawImage(img, (cw - w) / 2, (ch - h) / 2 - (portrait ? ch * 0.08 : 0), w, h);
+      const fx = SEQUENCE.focus(i);
+      const x = Math.min(0, Math.max(cw - w, cw / 2 - w * fx));
+      ctx2d.drawImage(img, x, (ch - h) / 2, w, h);
     };
 
     const resize = () => {
@@ -133,7 +135,12 @@ export default function ScrollSequence() {
       <div className="sequence-bgword" ref={word} aria-hidden="true">
         espresso · crema · rituel
       </div>
-      <canvas ref={canvas} aria-label="Animation 3D d'une tasse d'espresso qui se décompose en grains de café" role="img" />
+      <canvas
+        ref={canvas}
+        role="img"
+        aria-label="Vidéo : des grains de café versés dans le moulin, le tassage, l'extraction d'un espresso puis un latte art"
+      />
+      <div className="sequence-shade" aria-hidden="true" />
 
       {CAPTIONS.map((c, i) => (
         <div className={`caption ${c.side}`} key={i}>
@@ -152,7 +159,7 @@ export default function ScrollSequence() {
         <div className="track">
           <div className="fill" ref={fill} />
         </div>
-        <span>Scroll pour déconstruire</span>
+        <span>Du grain à la tasse</span>
       </div>
     </section>
   );

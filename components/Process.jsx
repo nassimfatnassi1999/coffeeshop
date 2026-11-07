@@ -8,7 +8,7 @@ import { STEPS } from '@/lib/data';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-/** Savoir-faire : vidéo de grains (rendue en 3D) en fond + étapes. */
+/** Savoir-faire : vraie vidéo de grains de café en fond + étapes. */
 export default function Process() {
   const root = useRef(null);
   const video = useRef(null);

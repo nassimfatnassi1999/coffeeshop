@@ -1,11 +1,11 @@
-# ☕ KAHWA — site café 3D avec animations au scroll
+# ☕ KAHWA — site café avec animations au scroll
 
 Site vitrine d'un torréfacteur de café (marque fictive **KAHWA**), construit avec **Next.js (React)**,
-**Three.js / React Three Fiber** pour la 3D, **GSAP ScrollTrigger** pour les animations au scroll et
-**Lenis** pour le défilement fluide.
+**GSAP ScrollTrigger** pour les animations au scroll et **Lenis** pour le défilement fluide.
 
-Tous les visuels (tasses, grains, sachets, vidéo, séquence d'images) sont **générés par code**, à partir
-de modèles 3D procéduraux. Aucune image externe ni banque d'images.
+Tous les visuels sont de **vraies photos et vidéos** (Unsplash et Mixkit, libres de droits, usage
+commercial autorisé) : tasse fumante, grains, tassage, extraction d'espresso, latte art, fermes de café.
+Sources et licences : [CREDITS.md](CREDITS.md).
 
 ---
 
@@ -36,12 +36,12 @@ Déploiement : le projet se déploie tel quel sur **Vercel** (importer le dossie
 | Section | Effet |
 | --- | --- |
 | **Loader** | Compteur 000 → 100 pendant le préchargement des 150 images de la séquence, puis ouverture en rideau |
-| **Hero** | Scène 3D **temps réel** (React Three Fiber) : tasse de latte avec latte art, vapeur animée (shader GLSL), grains flottants, parallaxe à la souris. Au scroll, la tasse tourne, montre le latte art puis s'envole |
-| **Expérience** | Animation "vidéo" pilotée par le scroll : 150 images 3D dessinées dans un `<canvas>` (technique des pages produits Apple). La tasse se décompose en "vue éclatée" et des centaines de grains tourbillonnent. Légendes qui apparaissent au bon moment |
+| **Hero** | **Vraie vidéo** en boucle (tasse fumante au soleil), parallaxe à la souris. Au scroll, la caméra avance vers la tasse et le logo s'envole |
+| **Expérience** | Animation "vidéo" pilotée par le scroll : 150 images tirées de vraies vidéos, dessinées dans un `<canvas>` (technique des pages produits Apple). Du grain à la tasse : grains versés dans le moulin → tassage → extraction de l'espresso → latte art. Légendes qui apparaissent au bon moment |
 | **Bandeau** | Texte infini dont la vitesse et le sens suivent le scroll |
-| **Menu** | Défilement **horizontal** épinglé, cartes avec inclinaison 3D au survol (pile verticale sur mobile) |
-| **Origines** | Sachets de café avec parallaxe, bouton « Ajouter au panier » avec un grain qui vole jusqu'au panier |
-| **Savoir-faire** | Vidéo en boucle de grains qui tombent (avec flou de profondeur) en arrière-plan |
+| **Menu** | Défilement **horizontal** épinglé, vraies photos des boissons, cartes avec inclinaison 3D au survol (pile verticale sur mobile) |
+| **Origines** | Photos des pays d'origine (Éthiopie, Colombie, Brésil) avec parallaxe, bouton « Ajouter au panier » avec un grain qui vole jusqu'au panier |
+| **Savoir-faire** | Vraie vidéo en boucle de grains de café qui tombent, en arrière-plan |
 | **Chiffres** | Citation qui s'éclaire mot par mot au scroll + compteurs animés |
 | **Contact** | Newsletter, infos pratiques, grand logo qui se révèle lettre par lettre |
 
@@ -62,23 +62,21 @@ components/
   SmoothScroll.jsx     # Lenis + synchronisation GSAP
   Loader.jsx           # écran de chargement
   Nav.jsx, Cursor.jsx
-  Hero.jsx             # section hero (texte + scroll)
-  HeroScene.jsx        # scène 3D temps réel (React Three Fiber)
+  Hero.jsx             # section hero (vidéo + texte + scroll)
   ScrollSequence.jsx   # animation d'images pilotée par le scroll
   Marquee.jsx, Menu.jsx, Origins.jsx, Process.jsx, Stats.jsx, Footer.jsx
 lib/
-  three/models.js      # ⭐ modèles 3D procéduraux (tasse, soucoupe, grain, verre, sachet)
   data.js              # textes, produits, prix, origines → à modifier facilement
-  store.js             # petit état partagé (scroll, souris, panier)
+  store.js             # petit état partagé (Lenis, chargement, panier)
 public/
-  sequence/            # 150 images .webp de l'animation au scroll
-  video/               # vidéo en boucle (mp4 + webm + poster)
-  images/products/     # visuels des boissons
-  images/bags/         # visuels des sachets
+  sequence/            # 150 images .webp de l'animation au scroll (tirées de vraies vidéos)
+  video/               # hero-loop (tasse fumante) + beans-loop (grains) : mp4 + webm + poster
+  images/products/     # photos des boissons
+  images/origins/      # photos des pays d'origine
   og.jpg               # image de partage réseaux sociaux
 scripts/
-  render-assets.mjs    # régénère TOUS les visuels à partir des modèles 3D
-  render/              # scènes de rendu hors-ligne (Three.js dans Chromium)
+  prepare-media.sh     # télécharge les photos/vidéos (Unsplash, Mixkit) et prépare public/ avec ffmpeg
+CREDITS.md             # sources et licences de chaque photo / vidéo
 ```
 
 ---
@@ -87,30 +85,32 @@ scripts/
 
 - **Textes, prix, produits** : `lib/data.js`
 - **Couleurs et polices** : variables en haut de `app/globals.css`
-- **Forme de la tasse, couleur des grains, latte art** : `lib/three/models.js`
+- **Photos et vidéos** : remplace simplement les fichiers dans `public/` (mêmes noms), ou change les
+  sources dans `scripts/prepare-media.sh`
 - **Durée des animations au scroll** : `end: '+=380%'` dans `ScrollSequence.jsx`, `end: '+=110%'` dans `Hero.jsx`
 
-### Régénérer les images et la vidéo
+### Changer ou régénérer les photos et vidéos
 
-Si tu modifies les modèles 3D (`lib/three/models.js`) ou les scènes (`scripts/render/scenes.js`) :
-
-```bash
-npx playwright install chromium   # une seule fois
-npm run render:assets             # tout régénérer (~5 min)
-```
-
-Il faut aussi **ffmpeg** installé pour encoder la vidéo. Tu peux régénérer un seul élément :
+Les fichiers prêts à l'emploi sont déjà dans `public/`. Pour les refaire (ou en choisir d'autres) :
 
 ```bash
-node scripts/render-assets.mjs product:latte
-node scripts/render-assets.mjs sequence
+npm run media             # tout refaire (~2 min, télécharge ~250 Mo de vidéos sources)
+npm run media -- photos   # une seule partie : hero | sequence | process | photos
 ```
+
+Il faut **curl** et **ffmpeg** installés (Windows : utiliser Git Bash ou WSL).
+
+- Une **photo Unsplash** se choisit par son identifiant (`photo-XXXX` dans l'adresse de l'image) et un point
+  focal pour le recadrage.
+- Une **vidéo Mixkit** se choisit par son numéro (à la fin de l'adresse, ex. `.../steaming-mug-808/` → `808`).
+- Si tu changes le nombre d'images de la séquence, mets à jour `SEQUENCE.frames` dans `lib/data.js`.
+- Pense à mettre à jour `CREDITS.md`.
 
 ---
 
 ## 🧠 Comment marche l'animation "vidéo" au scroll ?
 
-1. Un script rend la scène 3D image par image (150 images) → `public/sequence/`.
+1. Un script découpe 4 vraies vidéos et les enchaîne en fondu, image par image (150 images) → `public/sequence/`.
 2. Le site précharge ces images.
 3. GSAP ScrollTrigger "épingle" la section et transforme la position du scroll en numéro d'image (0 → 149).
 4. À chaque changement, l'image correspondante est dessinée dans un `<canvas>`.
@@ -122,9 +122,10 @@ Résultat : une animation fluide qui avance et recule avec le scroll, comme une 
 ## 📦 Technologies
 
 - [Next.js 16](https://nextjs.org) (App Router) + React 19
-- [Three.js](https://threejs.org) + [@react-three/fiber](https://r3f.docs.pmnd.rs) + [@react-three/drei](https://drei.docs.pmnd.rs)
 - [GSAP](https://gsap.com) (ScrollTrigger, SplitText)
 - [Lenis](https://lenis.darkroom.engineering) (smooth scroll)
 - Polices : Fraunces + Manrope (via Fontsource, chargées localement)
+
+Photos : [Unsplash](https://unsplash.com) · Vidéos : [Mixkit](https://mixkit.co) — détails dans [CREDITS.md](CREDITS.md).
 
 Projet de démonstration — marque, adresse et prix fictifs.

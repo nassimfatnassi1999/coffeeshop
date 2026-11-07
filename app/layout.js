@@ -8,7 +8,7 @@ export const metadata = {
   metadataBase: new URL('http://localhost:3000'),
   title: 'KAHWA — Specialty Coffee Roasters',
   description:
-    'Café de spécialité torréfié en petites séries. Expérience 3D, origines uniques, espresso, latte et cold brew.',
+    'Café de spécialité torréfié en petites séries. Origines uniques, espresso, latte et cold brew — du grain à la tasse.',
   openGraph: {
     title: 'KAHWA — Specialty Coffee Roasters',
     description: 'Torréfié lentement, servi avec soin.',
